@@ -3,9 +3,11 @@ package com.alphitardian.moviecatalogueapplication.ui.tvshow
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
+import androidx.paging.PagedList
 import com.alphitardian.moviecatalogueapplication.model.MovieReposity
-import com.alphitardian.moviecatalogueapplication.model.ShowEntity
+import com.alphitardian.moviecatalogueapplication.model.local.entity.ShowEntity
 import com.alphitardian.moviecatalogueapplication.utils.DataSource
+import com.alphitardian.moviecatalogueapplication.vo.Resource
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Before
@@ -29,7 +31,10 @@ class TvShowViewModelTest {
     private lateinit var movieReposity: MovieReposity
 
     @Mock
-    private lateinit var observer: Observer<List<ShowEntity>>
+    private lateinit var observer : Observer<Resource<PagedList<ShowEntity>>>
+
+    @Mock
+    private lateinit var pagedList: PagedList<ShowEntity>
 
     @Before
     fun setUp() {
@@ -38,13 +43,15 @@ class TvShowViewModelTest {
 
     @Test
     fun getShows() {
-        val dummyShows = DataSource.getTvShows()
-        val shows = MutableLiveData<List<ShowEntity>>()
+        val dummyShows = Resource.success(pagedList)
+        `when`(dummyShows.data?.size).thenReturn(10)
+
+        val shows = MutableLiveData<Resource<PagedList<ShowEntity>>>()
         shows.value = dummyShows
 
         `when`(movieReposity.getTopRatedTvShows()).thenReturn(shows)
 
-        val tvShowEntities = viewModel.getShows().value
+        val tvShowEntities = viewModel.getShows().value?.data
 
         verify(movieReposity).getTopRatedTvShows()
         assertNotNull(tvShowEntities)

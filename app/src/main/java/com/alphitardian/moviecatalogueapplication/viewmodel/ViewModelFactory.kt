@@ -6,6 +6,8 @@ import androidx.lifecycle.ViewModelProvider
 import com.alphitardian.moviecatalogueapplication.di.Injection
 import com.alphitardian.moviecatalogueapplication.model.MovieReposity
 import com.alphitardian.moviecatalogueapplication.ui.detail.MovieDetailViewModel
+import com.alphitardian.moviecatalogueapplication.ui.favorite.movie.FavoriteMovieViewModel
+import com.alphitardian.moviecatalogueapplication.ui.favorite.tvshow.FavoriteTvShowViewModel
 import com.alphitardian.moviecatalogueapplication.ui.movie.MovieViewModel
 import com.alphitardian.moviecatalogueapplication.ui.tvshow.TvShowViewModel
 
@@ -33,6 +35,12 @@ class ViewModelFactory private constructor(private val movieReposity: MovieRepos
             }
             modelClass.isAssignableFrom(MovieDetailViewModel::class.java) -> {
                 return MovieDetailViewModel(movieReposity) as T
+            }
+            modelClass.isAssignableFrom(FavoriteMovieViewModel::class.java) -> {
+                return FavoriteMovieViewModel(movieReposity) as T
+            }
+            modelClass.isAssignableFrom(FavoriteTvShowViewModel::class.java) -> {
+                return FavoriteTvShowViewModel(movieReposity) as T
             }
             else -> throw Throwable("Unknown ViewModel class: " + modelClass.name)
         }

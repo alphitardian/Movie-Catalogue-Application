@@ -11,7 +11,10 @@ import com.alphitardian.moviecatalogueapplication.ui.tvshow.TvShowFragment
 class SectionsPagerAdapter(private val context: Context, fragmentManager: FragmentManager) :
     FragmentPagerAdapter(fragmentManager, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 
-    private val tabTitle = arrayOf(context.getString(R.string.movie_tab_text), context.getString(R.string.tvshows_tab_text))
+    private val tabTitle = arrayOf(
+        context.getString(R.string.movie_tab_text),
+        context.getString(R.string.tvshows_tab_text)
+    )
 
     override fun getCount(): Int {
         return tabTitle.size

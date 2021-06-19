@@ -1,34 +1,36 @@
 package com.alphitardian.moviecatalogueapplication.model.remote
 
 import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import com.alphitardian.moviecatalogueapplication.BuildConfig
 import com.alphitardian.moviecatalogueapplication.api.ApiConfig
 import com.alphitardian.moviecatalogueapplication.utils.EspressoIdlidngResource
-import com.alphitardian.moviecatalogueapplication.utils.JsonHelper
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class RemoteDataSource private constructor(private val jsonHelper: JsonHelper) {
+class RemoteDataSource private constructor() {
     companion object {
         @Volatile
         private var instance: RemoteDataSource? = null
 
-        fun getInstance(helper: JsonHelper): RemoteDataSource = instance ?: synchronized(this) {
-            instance ?: RemoteDataSource(helper).apply {
+        fun getInstance(): RemoteDataSource = instance ?: synchronized(this) {
+            instance ?: RemoteDataSource().apply {
                 instance = this
             }
         }
     }
 
-    fun getTopRatedMovies(callback: LoadMovieCallback) {
+    fun getTopRatedMovies(): LiveData<ApiResponse<List<ResultsItemMovie>>> {
         EspressoIdlidngResource.increment()
-        ApiConfig.getApiService().getTopRatedMovies(ApiConfig.API_KEY).enqueue(object :
+
+        val resultMovie = MutableLiveData<ApiResponse<List<ResultsItemMovie>>>()
+        ApiConfig.getApiService().getTopRatedMovies(BuildConfig.API_KEY).enqueue(object :
             Callback<MovieResponse> {
             override fun onResponse(call: Call<MovieResponse>, response: Response<MovieResponse>) {
                 if (response.isSuccessful) {
-                    callback.onAllMovieReceived(
-                        response.body()?.results!!
-                    )
+                    resultMovie.value = ApiResponse.success(response.body()?.results!!)
                     EspressoIdlidngResource.decrement()
                 }
             }
@@ -37,20 +39,22 @@ class RemoteDataSource private constructor(private val jsonHelper: JsonHelper) {
                 Log.e("RemoteDataSource", "onFailure: " + t)
             }
         })
+
+        return resultMovie
     }
 
-    fun getTopRatedTvShows(callback: LoadTvShowCallback) {
+    fun getTopRatedTvShows(): LiveData<ApiResponse<List<ResultsItemTvShow>>> {
         EspressoIdlidngResource.increment()
-        ApiConfig.getApiService().getTopRatedTvShows(ApiConfig.API_KEY).enqueue(object :
+
+        val resultShow = MutableLiveData<ApiResponse<List<ResultsItemTvShow>>>()
+        ApiConfig.getApiService().getTopRatedTvShows(BuildConfig.API_KEY).enqueue(object :
             Callback<TvShowResponse> {
             override fun onResponse(
                 call: Call<TvShowResponse>,
                 response: Response<TvShowResponse>
             ) {
                 if (response.isSuccessful) {
-                    callback.onAllShowReceived(
-                        response.body()?.results!!
-                    )
+                    resultShow.value = ApiResponse.success(response.body()?.results!!)
                     EspressoIdlidngResource.decrement()
                 }
             }
@@ -59,20 +63,22 @@ class RemoteDataSource private constructor(private val jsonHelper: JsonHelper) {
                 Log.e("RemoteDataSource", "onFailure: " + t)
             }
         })
+
+        return resultShow
     }
 
-    fun getMovieDetail(callback: LoadMovieDetailCallback, movieId: String) {
+    fun getMovieDetail(movieId: String): LiveData<ApiResponse<ResultsItemMovie>> {
         EspressoIdlidngResource.increment()
-        ApiConfig.getApiService().getMovieDetail(movieId, ApiConfig.API_KEY).enqueue(object :
+
+        val resultMovie = MutableLiveData<ApiResponse<ResultsItemMovie>>()
+        ApiConfig.getApiService().getMovieDetail(movieId, BuildConfig.API_KEY).enqueue(object :
             Callback<ResultsItemMovie> {
             override fun onResponse(
                 call: Call<ResultsItemMovie>,
                 response: Response<ResultsItemMovie>
             ) {
                 if (response.isSuccessful) {
-                    callback.onMovieDetailReceived(
-                        response.body()!!
-                    )
+                    resultMovie.value = ApiResponse.success(response.body()!!)
                     EspressoIdlidngResource.decrement()
                 }
             }
@@ -81,20 +87,22 @@ class RemoteDataSource private constructor(private val jsonHelper: JsonHelper) {
                 Log.e("RemoteDataSource", "onFailure: " + t)
             }
         })
+
+        return resultMovie
     }
 
-    fun getTvShowDetail(callback: LoadTvShowDetailCallback, showId: String) {
+    fun getTvShowDetail(showId: String): LiveData<ApiResponse<ResultsItemTvShow>> {
         EspressoIdlidngResource.increment()
-        ApiConfig.getApiService().getTvShowsDetail(showId, ApiConfig.API_KEY).enqueue(object :
+
+        val resultShow = MutableLiveData<ApiResponse<ResultsItemTvShow>>()
+        ApiConfig.getApiService().getTvShowsDetail(showId, BuildConfig.API_KEY).enqueue(object :
             Callback<ResultsItemTvShow> {
             override fun onResponse(
                 call: Call<ResultsItemTvShow>,
                 response: Response<ResultsItemTvShow>
             ) {
                 if (response.isSuccessful) {
-                    callback.onTvShowDetailReceived(
-                        response.body()!!
-                    )
+                    resultShow.value = ApiResponse.success(response.body()!!)
                     EspressoIdlidngResource.decrement()
                 }
             }
@@ -103,21 +111,7 @@ class RemoteDataSource private constructor(private val jsonHelper: JsonHelper) {
                 Log.e("RemoteDataSource", "onFailure: " + t)
             }
         })
-    }
 
-    public interface LoadMovieCallback {
-        fun onAllMovieReceived(response: List<ResultsItemMovie>)
-    }
-
-    public interface LoadTvShowCallback {
-        fun onAllShowReceived(response: List<ResultsItemTvShow>)
-    }
-
-    public interface LoadMovieDetailCallback {
-        fun onMovieDetailReceived(response: ResultsItemMovie)
-    }
-
-    public interface LoadTvShowDetailCallback {
-        fun onTvShowDetailReceived(response: ResultsItemTvShow)
+        return resultShow
     }
 }

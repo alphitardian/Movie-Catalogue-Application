@@ -11,6 +11,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MovieCatalogueApplication">
+        <activity android:name=".ui.favorite.main.FavoriteActivity"></activity>
         <activity android:name=".ui.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -19,7 +20,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.detail.MovieDetailActivity" />
-        <activity android:name=".ui.main.MainActivity"/>
+        <activity android:name=".ui.main.MainActivity" />
     </application>
 
 </manifest>

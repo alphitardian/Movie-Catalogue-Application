@@ -3,6 +3,7 @@ package com.alphitardian.moviecatalogueapplication.ui.main
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.core.app.ActivityScenario
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.Espresso.pressBack
 import androidx.test.espresso.IdlingRegistry
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
@@ -74,6 +75,34 @@ class MainActivityTest {
         onView(withText("TV Shows")).perform(click())
         onView(withId(R.id.tv_recyclerview)).check(matches(isDisplayed()))
         onView(withId(R.id.tv_recyclerview)).perform(
+            RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(
+                0,
+                click()
+            )
+        )
+
+        onView(withId(R.id.movie_title_textview)).check(matches(isDisplayed()))
+        onView(withId(R.id.movie_rating_textview)).check(matches(isDisplayed()))
+        onView(withId(R.id.movie_year_textview)).check(matches(isDisplayed()))
+        onView(withId(R.id.movie_overview_textview)).check(matches(isDisplayed()))
+        onView(withId(R.id.movie_poster_image)).check(matches(isDisplayed()))
+        onView(withId(R.id.movie_poster_card)).check(matches(isDisplayed()))
+    }
+
+    @Test
+    fun addMovieFavorite() {
+        onView(withId(R.id.movie_recyclerview)).perform(
+            RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(
+                0,
+                click()
+            )
+        )
+        onView(withId(R.id.add_favorite_button)).perform(click())
+
+        pressBack()
+
+        onView(withId(R.id.action_favorite)).perform(click())
+        onView(withId(R.id.movie_favorite_recyclerview)).perform(
             RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(
                 0,
                 click()

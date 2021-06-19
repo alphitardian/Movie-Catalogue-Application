@@ -1,11 +1,13 @@
 package com.alphitardian.moviecatalogueapplication.ui.detail
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.alphitardian.moviecatalogueapplication.model.MovieReposity
-import com.alphitardian.moviecatalogueapplication.model.ShowEntity
+import com.alphitardian.moviecatalogueapplication.model.local.entity.ShowEntity
 import com.alphitardian.moviecatalogueapplication.utils.DataSource
+import com.alphitardian.moviecatalogueapplication.vo.Resource
 import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Rule
@@ -45,18 +47,15 @@ class MovieDetailViewModelTest {
 
     @Test
     fun getShow() {
+        val dummyMovie = DataSource.getMovies().get(0)
         val movie = MutableLiveData<ShowEntity>()
         movie.value = dummyMovie
 
-        `when`(movieReposity.getMovieDetail(showId)).thenReturn(movie)
+        `when`(movieReposity.getMovieDetail(showId)).thenReturn(movie as LiveData<ShowEntity>)
 
         viewModel.setSelectedShow(showId)
 
-        val showEntity = viewModel.getShow().value
-
-        assertNotNull(showEntity)
-
-        viewModel.getShow().observeForever(observer)
+        viewModel.movieResource.observeForever(observer)
         verify(observer).onChanged(dummyMovie)
     }
 }

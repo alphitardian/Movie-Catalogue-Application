@@ -11,11 +11,11 @@
     <ImageView
         android:layout_width="150dp"
         android:layout_height="150dp"
-
         android:src="@drawable/ic_baseline_local_movies_24"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:contentDescription="@string/movie_icon_content_desc"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
